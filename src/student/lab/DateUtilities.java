@@ -5,14 +5,21 @@
  */
 package student.lab;
 
+import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.Period;
+import java.time.chrono.ChronoLocalDate;
+import java.time.chrono.Chronology;
+import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DecimalStyle;
+import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Locale;
 
 /**
  *
@@ -26,7 +33,7 @@ public class DateUtilities {
      * @return- a LocalDateTime 
      * @throws IllegalArgumentException 
      */
-    public LocalDateTime  dateStringOne (String dateInput) throws IllegalArgumentException{
+    public LocalDateTime  dateStringCustomPattern (String dateInput) throws IllegalArgumentException{
      if(dateInput == null || dateInput.isEmpty() ){
          throw new IllegalArgumentException("DateUtilities.dateStringOne"); 
      }
@@ -35,10 +42,21 @@ public class DateUtilities {
  dateTime = LocalDateTime.parse(dateInput, formatter);
 
      }
+    
+     
 
     
     return dateTime; 
 }
+    
+     public LocalDate dateStringNotCustom(){
+       String dayAfterTommorrow = "20140116";
+       LocalDate formatted = LocalDate.parse(dayAfterTommorrow, DateTimeFormatter.BASIC_ISO_DATE);
+return formatted; 
+ 
+         
+         
+     }
     /**
      * 
      * @return the current date as a String 
@@ -73,4 +91,30 @@ String output = ("There are " + p.getMonths() + " months, and " +
                    p2 + " total)");
 return output; 
 }
+/**
+ * Converts a LocalDate (ISO) value to a ChronoLocalDate date
+ * using the provided Chronology, and then formats the
+ * ChronoLocalDate to a String using a DateTimeFormatter with a
+ * SHORT pattern based on the Chronology and the current Locale.
+ *
+ * @param localDate - the ISO date to convert and format.
+ * 
+ */
+public  String toString(LocalDate localDate) {
+        ChronoLocalDate cDate;
+       
+           Chronology chrono = IsoChronology.INSTANCE;
+        
+        try {
+            cDate = chrono.date(localDate);
+        } catch (DateTimeException ex) {
+            System.err.println(ex);
+  
+            cDate = localDate;
+        }
+        DateTimeFormatter dateFormatter =
+            DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+
+        return dateFormatter.format(cDate);
+    }
 }
